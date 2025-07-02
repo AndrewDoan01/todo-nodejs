@@ -5,7 +5,19 @@ const mongoose = require('mongoose');
 const app = express();
 
 // Set the port
-const PORT = 3000;
+const PORT = 5000;
+
+// CORS middleware - Cho phép frontend truy cập API
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
 
 app.use(express.json()); // Cho phép đọc JSON từ request body
 
@@ -26,7 +38,7 @@ const todoSchema = new mongoose.Schema({
 const Todo = mongoose.model('Todo', todoSchema);
 
 // Kết nối MongoDB
-mongoose.connect('mongodb+srv://AndrewDoan01:Doanquocan@2005@cluster0.xqxe4o1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect('mongodb+srv://AndrewDoan01:Doanquocan%402005@cluster0.xqxe4o1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

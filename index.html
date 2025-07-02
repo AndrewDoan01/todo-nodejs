@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-rendering: optimizeLegibility;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* Ensure Vietnamese characters render properly */
+        * {
+            font-family: inherit;
+        }
+
+        input,
+        textarea,
+        button,
+        .todo-text,
+        .todo-item,
+        div,
+        p,
+        h1,
+        h2,
+        h3 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', Arial, sans-serif;
+            text-rendering: optimizeLegibility;
+            -webkit-font-feature-settings: "liga" 1, "kern" 1;
+            font-feature-settings: "liga" 1, "kern" 1;
+        }
+
+        .todo-form {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-edit {
+            background: #ffd700;
+            color: #333;
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .btn-delete {
+            background: #ff4757;
+            color: white;
+            font-size: 14px;
+            padding: 8px 12px;
+        }
+
+        .btn-edit:hover,
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .todos-container {
+            padding: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #4facfe;
+            transition: all 0.3s;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .todo-item.completed {
+            opacity: 0.7;
+            border-left-color: #28a745;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .todo-date {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #d63031;
+        }
+
+        .success {
+            background: #e6f7ff;
+            color: #0066cc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0066cc;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .todo-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Todo App</h1>
+            <p>Quản lý công việc của bạn một cách hiệu quả</p>
+        </div>
+
+        <div class="todo-form">
+            <div id="message"></div>
+            <div class="input-group">
+                <input type="text" id="todoInput" class="todo-input" placeholder="Nhập công việc mới..."
+                    maxlength="200">
+                <button onclick="addTodo()" class="btn btn-primary">
+                    ➕ Thêm
+                </button>
+                <button onclick="loadTodos()" class="btn btn-edit">
+                    🔄 Làm mới
+                </button>
+            </div>
+        </div>
+
+        <div class="todos-container">
+            <div id="loading" class="loading" style="display: none;">
+                ⏳ Đang tải...
+            </div>
+            <div id="todosContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let editingTodoId = null;
+
+        // Load todos khi trang load
+        document.addEventListener('DOMContentLoaded', loadTodos);
+
+        // Enter key để thêm todo
+        document.getElementById('todoInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                if (editingTodoId) {
+                    updateTodo();
+                } else {
+                    addTodo();
+                }
+            }
+        });
+
+        // Hiển thị message
+        function showMessage(message, type = 'success') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => messageDiv.innerHTML = '', 3000);
+        }
+
+        // Load tất cả todos
+        async function loadTodos() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('todosContainer');
+
+            loading.style.display = 'block';
+            container.innerHTML = ''; try {
+                const response = await fetch(`${API_BASE}/todos`);
+                const todos = await response.json();
+
+                // Debug: Log the raw data from API
+                console.log('Raw todos from API:', todos);
+                if (todos.length > 0) {
+                    console.log('First todo text:', todos[0].text);
+                    console.log('Text bytes:', [...todos[0].text].map(c => c.charCodeAt(0)));
+                }
+
+                loading.style.display = 'none';
+
+                if (todos.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <h3>🎉 Chưa có công việc nào!</h3>
+                            <p>Hãy thêm công việc đầu tiên của bạn</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Clear container first
+                container.innerHTML = '';
+
+                // Create todos using DOM to avoid encoding issues
+                todos.forEach(todo => {
+                    const todoItem = document.createElement('div');
+                    todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+
+                    todoItem.innerHTML = `
+                        <input 
+                            type="checkbox" 
+                            class="todo-checkbox" 
+                            ${todo.completed ? 'checked' : ''}
+                            onchange="toggleTodo('${todo._id}', ${!todo.completed})"
+                        >
+                        <div class="todo-content">
+                            <div class="todo-text ${todo.completed ? 'completed' : ''}"></div>
+                            <div class="todo-date">
+                                📅 ${new Date(todo.createdAt).toLocaleDateString('vi-VN')} 
+                                ${new Date(todo.createdAt).toLocaleTimeString('vi-VN')}
+                            </div>
+                        </div>
+                        <div class="todo-actions">
+                            <button onclick="editTodo('${todo._id}', \`${todo.text.replace(/`/g, '\\`')}\`, ${todo.completed})" class="btn btn-edit">
+                                ✏️ Sửa
+                            </button>
+                            <button onclick="deleteTodo('${todo._id}')" class="btn btn-delete">
+                                🗑️ Xóa
+                            </button>
+                        </div>
+                    `;
+
+                    // Set text content safely to handle Vietnamese characters
+                    const textElement = todoItem.querySelector('.todo-text');
+
+                    // Try to fix encoding issues for Vietnamese text
+                    let displayText = todo.text;
+                    try {
+                        // Fix common encoding issues
+                        displayText = todo.text
+                            .replace(/Ã¡/g, 'á')
+                            .replace(/Ã /g, 'à')
+                            .replace(/áº¡/g, 'ạ')
+                            .replace(/áº£/g, 'ả')
+                            .replace(/Ã£/g, 'ã')
+                            .replace(/Ã¢/g, 'â')
+                            .replace(/áº¥/g, 'ấ')
+                            .replace(/áº§/g, 'ầ')
+                            .replace(/áº­/g, 'ậ')
+                            .replace(/áº©/g, 'ẩ')
+                            .replace(/áº«/g, 'ẫ')
+                            .replace(/Äƒ/g, 'ă')
+                            .replace(/áº¯/g, 'ắ')
+                            .replace(/áº±/g, 'ằ')
+                            .replace(/áº³/g, 'ẳ')
+                            .replace(/áºµ/g, 'ẵ')
+                            .replace(/áº·/g, 'ặ')
+                            .replace(/Ã©/g, 'é')
+                            .replace(/Ã¨/g, 'è')
+                            .replace(/áº¹/g, 'ẹ')
+                            .replace(/áº»/g, 'ẻ')
+                            .replace(/áº½/g, 'ẽ')
+                            .replace(/Ãª/g, 'ê')
+                            .replace(/áº¿/g, 'ế')
+                            .replace(/á»/g, 'ề')
+                            .replace(/á»‡/g, 'ệ')
+                            .replace(/á»ƒ/g, 'ể')
+                            .replace(/á»…/g, 'ễ')
+                            .replace(/Ã­/g, 'í')
+                            .replace(/Ã¬/g, 'ì')
+                            .replace(/á»‹/g, 'ị')
+                            .replace(/á»‰/g, 'ỉ')
+                            .replace(/Ä©/g, 'ĩ')
+                            .replace(/Ã³/g, 'ó')
+                            .replace(/Ã²/g, 'ò')
+                            .replace(/á»/g, 'ọ')
+                            .replace(/á»/g, 'ỏ')
+                            .replace(/Ãµ/g, 'õ')
+                            .replace(/Ã´/g, 'ô')
+                            .replace(/á»'/g, 'ố')
+                            .replace(/á»"/g, 'ồ')
+                            .replace(/á»™/g, 'ộ')
+                            .replace(/á»•/g, 'ổ')
+                            .replace(/á»—/g, 'ỗ')
+                            .replace(/Æ¡/g, 'ơ')
+                            .replace(/á»›/g, 'ớ')
+                            .replace(/á»/g, 'ờ')
+                            .replace(/á»£/g, 'ợ')
+                            .replace(/á»Ÿ/g, 'ở')
+                            .replace(/á»¡/g, 'ỡ')
+                            .replace(/Ãº/g, 'ú')
+                            .replace(/Ã¹/g, 'ù')
+                            .replace(/á»¥/g, 'ụ')
+                            .replace(/á»§/g, 'ủ')
+                            .replace(/Å©/g, 'ũ')
+                            .replace(/Æ°/g, 'ư')
+                            .replace(/á»©/g, 'ứ')
+                            .replace(/á»«/g, 'ừ')
+                            .replace(/á»±/g, 'ự')
+                            .replace(/á»­/g, 'ử')
+                            .replace(/á»¯/g, 'ữ')
+                            .replace(/Ã½/g, 'ý')
+                            .replace(/á»³/g, 'ỳ')
+                            .replace(/á»µ/g, 'ỵ')
+                            .replace(/á»·/g, 'ỷ')
+                            .replace(/á»¹/g, 'ỹ')
+                            .replace(/Ä'/g, 'đ')
+                            .replace(/Ä/g, 'Đ');
+                    } catch (e) {
+                        console.log('Encoding fix error:', e);
+                    }
+
+                    textElement.textContent = displayText;
+
+                    container.appendChild(todoItem);
+                });
+            } catch (error) {
+                loading.style.display = 'none';
+                showMessage('❌ Lỗi khi tải danh sách: ' + error.message, 'error');
+            }
+        }
+
+        // Thêm todo mới
+        async function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                showMessage('⚠️ Vui lòng nhập nội dung công việc!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/todos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text, completed: false })
+                });
+
+                if (response.ok) {
+                    input.value = '';
+                    showMessage('✅ Thêm công việc thành công!');
+                    loadTodos();
+                } else {
+                    const error = await response.json();
+                    showMessage('❌ ' + error.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Lỗi khi thêm: ' + error.message, 'error');
+            }
+        }
+
+        // Toggle completed status
+        async function toggleTodo(id, completed) {
+            try {
+                const response = await fetch(`${API_BASE}/todos/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ completed })
+                });
+
+                if (response.ok) {
+                    showMessage(completed ? '✅ Đã hoàn thành!' : '🔄 Đã bỏ hoàn thành!');
+                    loadTodos();
+                } else {
+                    const error = await response.json();
+                    showMessage('❌ ' + error.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Lỗi khi cập nhật: ' + error.message, 'error');
+            }
+        }
+
+        // Edit todo
+        function editTodo(id, text, completed) {
+            editingTodoId = id;
+            const input = document.getElementById('todoInput');
+            input.value = text;
+            input.focus();
+
+            // Change button text
+            const addBtn = document.querySelector('.btn-primary');
+            addBtn.textContent = '💾 Cập nhật';
+            addBtn.onclick = updateTodo;
+
+            showMessage('✏️ Đang chỉnh sửa. Nhấn Enter hoặc click Cập nhật!', 'success');
+        }
+
+        // Update todo
+        async function updateTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                showMessage('⚠️ Vui lòng nhập nội dung công việc!', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/todos/${editingTodoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text })
+                });
+
+                if (response.ok) {
+                    input.value = '';
+                    editingTodoId = null;
+
+                    // Reset button
+                    const addBtn = document.querySelector('.btn-primary');
+                    addBtn.textContent = '➕ Thêm';
+                    addBtn.onclick = addTodo;
+
+                    showMessage('✅ Cập nhật thành công!');
+                    loadTodos();
+                } else {
+                    const error = await response.json();
+                    showMessage('❌ ' + error.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Lỗi khi cập nhật: ' + error.message, 'error');
+            }
+        }
+
+        // Delete todo
+        async function deleteTodo(id) {
+            if (!confirm('🗑️ Bạn có chắc muốn xóa công việc này?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/todos/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    showMessage('🗑️ Đã xóa thành công!');
+                    loadTodos();
+                } else {
+                    const error = await response.json();
+                    showMessage('❌ ' + error.error, 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Lỗi khi xóa: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>
