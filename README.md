@@ -106,7 +106,7 @@ Project sử dụng **GitHub Actions** để tự động hóa testing và deplo
 
 ### Các bước trong Pipeline
 1. **Checkout code** từ repository
-2. **Setup Node.js** (versions 16, 18, 20)
+2. **Setup Node.js** (versions 22)
 3. **Install dependencies** với npm ci
 4. **Run tests** (npm test)
 5. **Run linting** (nếu có)
