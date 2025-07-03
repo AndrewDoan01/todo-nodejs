@@ -52,34 +52,26 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy:
+  simple-deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     
     steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v0.1.8
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            # Pull latest image
-            docker pull ${{ secrets.DOCKER_USERNAME }}/todo-nodejs:latest
-            
-            # Stop existing container
-            docker stop todo-nodejs || true
-            docker rm todo-nodejs || true
-            
-            # Run new container
-            docker run -d \
-              --name todo-nodejs \
-              --restart unless-stopped \
-              -p 5000:5000 \
-              -e MONGODB_URI="${{ secrets.MONGODB_URI }}" \
-              -e NODE_ENV=production \
-              ${{ secrets.DOCKER_USERNAME }}/todo-nodejs:latest
-            
-            # Clean up old images
-            docker image prune -f
+      - name: 🎉 Deploy hoàn thành
+        run: |
+          echo "✅ Docker image đã được build và push thành công!"
+          echo "🐳 Image có thể tải về bằng lệnh:"
+          echo "   docker pull ${{ secrets.DOCKER_USERNAME }}/todo-nodejs:latest"
+          echo ""
+          echo "🚀 Để chạy ứng dụng trên máy local:"
+          echo "   docker run -p 5000:5000 ${{ secrets.DOCKER_USERNAME }}/todo-nodejs:latest"
+          echo ""
+          echo "🌐 Các platform deploy dễ dàng khác:"
+          echo "   - Heroku (free tier)"
+          echo "   - Railway.app"
+          echo "   - Render.com"
+          echo "   - Vercel (cho Node.js)"
+          echo "   - DigitalOcean App Platform"
+
+  
